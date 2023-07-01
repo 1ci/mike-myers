@@ -5,11 +5,6 @@
 #include <cstrike>
 #include <basecomm>
 
-// Special Days Natives
-native int SD_Limit(); 	// Get SD Limit.
-native int SD_Count(); 	// Get SD Count.
-native SD_Ran(); 		// Increase SD count.
-
 #define ADMIN_FLAG		ADMFLAG_KICK
 
 // Screen fade flags.
@@ -29,7 +24,7 @@ public Plugin:myinfo =
 	name = "Mike Myers",
 	author = "ici, Myles",
 	description = "A JB Special Day (Minigame)",
-	version = "1.12",
+	version = "1.1.3",
 	url = "http://steamcommunity.com/id/1ci"
 };
 
@@ -94,8 +89,8 @@ findOffsets()
 
 initCvars()
 {
-	g_hCountdownTimer = CreateConVar("sm_mikemyers_countdown_timer", "10", "", FCVAR_PLUGIN, true, 1.0, true, 60.0);
-	g_hSurvivalTimer = CreateConVar("sm_mikemyers_survival_timer", "60", "", FCVAR_PLUGIN, true, 10.0);
+	g_hCountdownTimer = CreateConVar("sm_mikemyers_countdown_timer", "10", "", _, true, 1.0, true, 60.0);
+	g_hSurvivalTimer = CreateConVar("sm_mikemyers_survival_timer", "60", "", _, true, 10.0);
 }
 
 initCmds()
@@ -169,18 +164,8 @@ public Panel_Handler(Handle:panel, MenuAction:action, client, choice)
 				SayText2(client, "%s The game is already running.", CHAT_PREFIX);
 				return;
 			}
-			
-			// Special days limit per map check
-			if (SD_Count() < SD_Limit())
-			{
-				SD_Ran();
-				start( client );
-			}
-			else
-			{
-				SayText2(client, "%s You have reached the limit of %i special days per map.", CHAT_PREFIX, SD_Limit());
-				return;
-			}
+
+			start( client );
 		}
 		case 2: // Disable
 		{
