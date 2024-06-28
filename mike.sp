@@ -215,6 +215,14 @@ start(client, Float:interval = 1.0)
 	CreateTimer(interval, Timer_Countdown, _, TIMER_REPEAT|TIMER_FLAG_NO_MAPCHANGE);
 }
 
+#define COLLISION_GROUP_DEBRIS_TRIGGER 2
+
+void respawnPlayer(int client) 
+{
+	CS_RespawnPlayer( client );
+	SetEntityCollisionGroup(client,COLLISION_GROUP_DEBRIS_TRIGGER);
+}
+
 public Action:Timer_Countdown(Handle:timer)
 {
 	if ( !g_bRunning )
@@ -229,7 +237,7 @@ public Action:Timer_Countdown(Handle:timer)
 				continue;
 			
 			if ( !IsPlayerAlive(i) )
-				CS_RespawnPlayer( i );
+				respawnPlayer( i );
 		}
 		
 		--g_iCountdownTimer;
@@ -401,7 +409,7 @@ public OnClientDisconnect(client)
 					{
 						// We tried to get a random alive minion but we couldn't.
 						// Let's just respawn the last one we've encountered then.
-						CS_RespawnPlayer(minion);
+						respawnPlayer(minion);
 						break;
 					}
 					index = GetRandomInt(0, GetArraySize(g_hMinions)-1);
@@ -445,7 +453,7 @@ public OnClientDisconnect(client)
 				{
 					// We tried to get a random alive minion but we couldn't.
 					// Let's just respawn the last one we've encountered then.
-					CS_RespawnPlayer(minion);
+					respawnPlayer(minion);
 					break;
 				}
 				index = GetRandomInt(0, GetArraySize(g_hMinions)-1);
@@ -853,7 +861,7 @@ public Action:Timer_RespawnMinion(Handle:timer, any:userid)
 	if ( team != CS_TEAM_T )
 		CS_SwitchTeam(client, CS_TEAM_T);
 	
-	CS_RespawnPlayer(client);
+	respawnPlayer(client);
 	
 	// If no survivors are left
 	if ( getPlayersCount(CS_TEAM_CT, true) == 0 )
